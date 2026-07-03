@@ -2,10 +2,18 @@ import './App.css';
 import Sidebar from './Sidebar.jsx';
 import ChatWindow from './ChatWindow.jsx';
 import { MyContext } from './MyContext.jsx';
+import { useState } from 'react';
+import { v4 as uuid } from 'uuid';
 
 function App() {
+  const [prompt, setPrompt] = useState('');
+  const [response, setResponse] = useState(null);
+  const [currentThreadId, setCurrentThreadId] = useState(uuid());
+
   const providerValues = {
-    // Add any values you want to provide to the context here
+    prompt, setPrompt,
+    response, setResponse,
+    currentThreadId, setCurrentThreadId,
   };
 
   return (

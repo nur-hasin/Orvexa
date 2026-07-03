@@ -1,15 +1,44 @@
 import "./ChatWindow.css";
 import Chat from "./Chat.jsx";
-import { useState } from "react";
+import { MyContext } from "./MyContext.jsx";
+import { useContext } from "react";
 
 function ChatWindow() {
-  const [message, setMessage] = useState("");
+  const {
+    prompt,
+    setPrompt,
+    response,
+    setResponse,
+    currentThreadId,
+    setCurrentThreadId,
+  } = useContext(MyContext);
+
+  const getResponse = async () => {
+    try {
+      const res = await fetch("http://localhost:8080/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body:JSON.stringify({
+        message: prompt,
+        threadId: currentThreadId,
+      }),
+    });
+      const data = await res.json();
+      setResponse(data.response);
+      setPrompt("");
+      console.log(data);
+    } catch (error) {
+      console.error("Error fetching response:", error);
+    }
+  };
 
   return (
     <div className="chat-window">
       <div className="navbar">
         <span>Orvexa</span>
-        <i class="fa-regular fa-share-from-square" title="Share"></i>
+        <i className="fa-regular fa-share-from-square" title="Share"></i>
       </div>
 
       <Chat></Chat>
@@ -19,13 +48,19 @@ function ChatWindow() {
           <input
             type="text"
             placeholder="Ask anything"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            onKeyDown={(e) =>
+              e.key === "Enter" && prompt.trim() && getResponse()
+            }
           />
           <button
             type="button"
-            disabled={!message.trim()}
-            title={message.trim() ? "Send prompt" : "Prompt is empty"}
+            disabled={!prompt.trim()}
+            title={prompt.trim() ? "Send prompt" : "Prompt is empty"}
+            onClick={() => {
+              getResponse();
+            }}
           >
             <i className="fa-solid fa-arrow-up"></i>
           </button>
