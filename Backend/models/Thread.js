@@ -31,11 +31,21 @@ const ThreadSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    isPinned: {
+      type: Boolean,
+      default: false,
+    },
     messages: [MessageSchema],
   },
   {
     timestamps: true,
   },
 );
+
+// Sidebar index
+ThreadSchema.index({
+  isPinned: -1,
+  updatedAt: -1,
+});
 
 export default mongoose.model("Thread", ThreadSchema);

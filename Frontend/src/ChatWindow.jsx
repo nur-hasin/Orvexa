@@ -1,7 +1,8 @@
 import "./ChatWindow.css";
 import Chat from "./Chat.jsx";
 import { MyContext } from "./MyContext.jsx";
-import { useContext } from "react";
+import { useContext, useState } from "react";
+import { ScaleLoader } from "react-spinners";
 
 function ChatWindow() {
   const {
@@ -13,18 +14,21 @@ function ChatWindow() {
     setCurrentThreadId,
   } = useContext(MyContext);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const getResponse = async () => {
+    setIsLoading(true);
     try {
       const res = await fetch("http://localhost:8080/api/chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body:JSON.stringify({
-        message: prompt,
-        threadId: currentThreadId,
-      }),
-    });
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: prompt,
+          threadId: currentThreadId,
+        }),
+      });
       const data = await res.json();
       setResponse(data.response);
       setPrompt("");
@@ -32,6 +36,7 @@ function ChatWindow() {
     } catch (error) {
       console.error("Error fetching response:", error);
     }
+    setIsLoading(false);
   };
 
   return (
@@ -42,6 +47,13 @@ function ChatWindow() {
       </div>
 
       <Chat></Chat>
+      
+      <ScaleLoader
+        color="#fff"
+        loading={isLoading}
+        cssOverride={{ display: "block", margin: "0 auto 10rem", borderColor: "red" }}
+        size={150}
+      />
 
       <div className="chat-input">
         <div className="input-box">

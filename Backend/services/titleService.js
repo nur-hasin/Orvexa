@@ -1,47 +1,48 @@
-import "dotenv/config";
 import { AI_CONFIG } from "../config/aiConfig.js";
+import openRouterClient from "./openRouterClient.js";
 
 const generateTitle = async (messages) => {
   try {
-    const response = await fetch(
-      "https://openrouter.ai/api/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-          "Content-Type": "application/json",
+    const { response, data } = await openRouterClient({
+      model: AI_CONFIG.TITLE.MODEL,
+
+      messages: [
+        {
+          role: "system",
+          content: `
+                Generate a short conversation title.
+                Rules:
+                - Maximum ${AI_CONFIG.TITLE.MAX_WORDS} words.
+                - No explanations.
+                - No line breaks.
+                - No quotation marks.
+                - No punctuation at the end.
+                - Return ONLY the title.
+          `,
         },
-        body: JSON.stringify({
-          model: AI_CONFIG.METADATA.MODEL,
 
-          messages: [
-            {
-              role: "system",
-              content: `
-                Generate a concise title.
-                Maximum ${AI_CONFIG.TITLE.MAX_WORDS} words.
-                Return only the title.`,
-            },
+        ...messages,
+      ],
 
-            ...messages,
-          ],
-
-          temperature: AI_CONFIG.METADATA.TEMPERATURE,
-          max_tokens: AI_CONFIG.TITLE.MAX_TOKENS,
-        }),
-      },
-    );
-
-    const data = await response.json();
+      temperature: AI_CONFIG.TITLE.TEMPERATURE,
+      max_tokens: AI_CONFIG.TITLE.MAX_TOKENS,
+    });
 
     if (!response.ok) {
       throw new Error(data.error?.message || "Failed to generate title");
     }
 
-    return data.choices[0].message.content.trim();
-  } catch (err) {
-    console.error("Title Service:", err);
+    const title = data?.choices?.[0]?.message?.content;
 
+    if (typeof title !== "string" || !title.trim()) {
+      throw new Error("Invalid title returned by AI");
+    }
+
+    return title.trim();
+  } catch (err) {
+    console.error("Title Service:", err.message);
+
+    // Fallback title
     return "New Chat";
   }
 };

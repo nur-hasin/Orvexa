@@ -5,25 +5,25 @@ import { AI_CONFIG } from "../config/aiConfig.js";
 import updateSummary from "../services/summaryService.js";
 import generateTitle from "../services/titleService.js";
 
-// test
-export const test = async (req, res, next) => {
-  try {
-    const thread = new Thread({
-      threadId: "test12345",
-      title: "Test Thread2",
-    });
-
-    const savedThread = await thread.save();
-    res.send(savedThread);
-  } catch (err) {
-    next(err);
-  }
-};
-
 // get all threads
 export const getThreads = async (req, res, next) => {
   try {
-    const threads = await Thread.find({}).sort({ updatedAt: -1 });
+    const threads = await Thread.find(
+      {},
+      {
+        _id: 0,
+        threadId: 1,
+        title: 1,
+        isPinned: 1,
+        updatedAt: 1,
+      },
+    )
+      .sort({
+        isPinned: -1,
+        updatedAt: -1,
+      })
+      .lean();
+
     return res.json(threads);
   } catch (err) {
     next(err);
@@ -35,7 +35,7 @@ export const getThread = async (req, res, next) => {
   const { threadId } = req.params;
 
   try {
-    const thread = await Thread.findOne({ threadId });
+    const thread = await Thread.findOne({ threadId }).lean();
 
     if (!thread) {
       const error = new Error("Thread not found");
@@ -100,7 +100,9 @@ export const chat = async (req, res, next) => {
     });
 
     if (thread.title === "New Chat") {
-      thread.title = await generateTitle(thread.messages.slice(0, AI_CONFIG.TITLE.CONTEXT_MESSAGES));
+      thread.title = await generateTitle(
+        thread.messages.slice(0, AI_CONFIG.TITLE.CONTEXT_MESSAGES),
+      );
     }
 
     const shouldUpdateSummary =
@@ -157,7 +159,6 @@ export const renameThread = async (req, res, next) => {
 
     return res.json({
       message: "Thread title updated successfully",
-      threadId: thread.threadId,
       title: thread.title,
     });
   } catch (err) {
@@ -165,8 +166,8 @@ export const renameThread = async (req, res, next) => {
   }
 };
 
-// get shareable thread
-export const shareThread = async (req, res, next) => {
+// toggle thread pin status
+export const togglePinThread = async (req, res, next) => {
   const { threadId } = req.params;
 
   try {
@@ -178,10 +179,17 @@ export const shareThread = async (req, res, next) => {
       return next(error);
     }
 
+    thread.isPinned = !thread.isPinned;
+    thread.updatedAt = new Date();
+
+    await thread.save();
+
     return res.json({
-      threadId: thread.threadId,
-      title: thread.title,
-      messages: thread.messages,
+      message: thread.isPinned
+        ? "Thread pinned successfully"
+        : "Thread unpinned successfully",
+      isPinned: thread.isPinned,
+      updatedAt: thread.updatedAt,
     });
   } catch (err) {
     next(err);
