@@ -23,82 +23,45 @@ const buildContext = (thread) => {
 };
 
 const getOpenRouterAIAPIResponse = async (thread) => {
-  const messages = buildContext(thread);
+  const controller = new AbortController();
 
-  const payload = {
-    messages,
-    temperature: AI_CONFIG.CHAT.TEMPERATURE,
-    max_tokens: AI_CONFIG.CHAT.MAX_TOKENS,
-  };
+  const timeout = setTimeout(() => {
+    controller.abort();
+  }, AI_CONFIG.CHAT.TIMEOUT);
 
-  let lastError = "Unknown error";
+  try {
+    const { response, data } = await openRouterClient({
+      model: AI_CONFIG.CHAT.MODEL,
+      messages: buildContext(thread),
+      temperature: AI_CONFIG.CHAT.TEMPERATURE,
+      max_tokens: AI_CONFIG.CHAT.MAX_TOKENS,
+      signal: controller.signal,
+    });
 
-  for (const model of AI_CONFIG.CHAT.MODELS) {
-    const controller = new AbortController();
-
-    const timeout = setTimeout(() => {
-      controller.abort();
-    }, AI_CONFIG.CHAT.TIMEOUT);
-
-    try {
-      const { response, data } = await openRouterClient({
-        model,
-        ...payload,
-        signal: controller.signal,
-      });
-
-      if (!response.ok) {
-        lastError = data.error?.message || `HTTP ${response.status}`;
-
-        if (process.env.NODE_ENV !== "production") {
-          console.warn(`✗ ${model} (${response.status}) - ${lastError}`);
-        }
-
-        // These errors won't succeed with another model
-        if ([400, 401, 403].includes(response.status)) {
-          throw new Error(lastError);
-        }
-
-        // Try the next model
-        continue;
-      }
-
-      const content = data?.choices?.[0]?.message?.content;
-
-      if (typeof content !== "string" || !content.trim()) {
-        if (process.env.NODE_ENV !== "production") {
-          console.warn(`${model} returned an empty response.`);
-        }
-        continue;
-      }
-
-      if (process.env.NODE_ENV !== "production") {
-        console.log(`✓ Using model: ${model}`);
-      }
-
-      return content.trim();
-    } catch (err) {
-      if (err.name === "AbortError") {
-        lastError = `${model} request timed out`;
-
-        if (process.env.NODE_ENV !== "production") {
-          console.warn(`✗ ${model} timed out`);
-        }
-      } else {
-        lastError = err.message;
-
-        if (process.env.NODE_ENV !== "production") {
-          console.warn(`✗ ${model} - ${err.message}`);
-        }
-      }
-    } finally {
-      clearTimeout(timeout);
+    if (!response.ok) {
+      throw new Error(data.error?.message || `HTTP ${response.status}`);
     }
-  }
 
-  throw new Error(
-    `All AI providers are currently unavailable. Please try again later. (${lastError})`,
-  );
+    const content = data?.choices?.[0]?.message?.content;
+
+    if (typeof content !== "string" || !content.trim()) {
+      throw new Error("AI returned an empty response.");
+    }
+
+    if (process.env.NODE_ENV !== "production") {
+      console.log(`✓ Using model: ${AI_CONFIG.MODEL}`);
+    }
+
+    return content.trim();
+  } catch (err) {
+    if (err.name === "AbortError") {
+      throw new Error("AI request timed out.");
+    }
+
+    throw err;
+  } finally {
+    clearTimeout(timeout);
+  }
 };
 
 export default getOpenRouterAIAPIResponse;

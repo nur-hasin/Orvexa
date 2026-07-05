@@ -100,9 +100,7 @@ export const chat = async (req, res, next) => {
     });
 
     if (thread.title === "New Chat") {
-      thread.title = await generateTitle(
-        thread.messages.slice(0, AI_CONFIG.TITLE.CONTEXT_MESSAGES),
-      );
+      thread.title = await generateTitle(thread.messages[0].content);
     }
 
     const shouldUpdateSummary =

@@ -16,7 +16,7 @@
 }
 
 .navbar span {
-    font-size: 22px;
+    font-size: 24px;
     font-weight: bold;
     margin: 10px 0 0 20px;
 }
@@ -29,7 +29,7 @@
 
 .navbar i:hover {
     background-color: rgba(180, 180, 180, 0.07);
-    border-radius: 50%;
+    border-radius: 30%;
     cursor: pointer;
 }
 
@@ -50,7 +50,7 @@
 .input-box input {
     width: 100%;
     padding: 20px;
-    padding-right: 55px;
+    padding-right: 60px;
     border-radius: 20px;
     border: solid 0.5px rgba(255, 255, 255, 0.05);
     background-color: rgba(255, 255, 255, 0.05);
@@ -71,12 +71,12 @@
 
 .input-box button {
     position: absolute;
-    right: 5px;
-    top: 5px;
+    right: 10px;
+    top: 6px;
     width: 30px;
     height: 30px;
     border: none;
-    border-radius: 35%;
+    border-radius: 30%;
     background: #fff;
 }
 

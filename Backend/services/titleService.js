@@ -1,7 +1,7 @@
 import { AI_CONFIG } from "../config/aiConfig.js";
 import openRouterClient from "./openRouterClient.js";
 
-const generateTitle = async (messages) => {
+const generateTitle = async (userMessage) => {
   try {
     const { response, data } = await openRouterClient({
       model: AI_CONFIG.TITLE.MODEL,
@@ -10,18 +10,23 @@ const generateTitle = async (messages) => {
         {
           role: "system",
           content: `
-                Generate a short conversation title.
-                Rules:
-                - Maximum ${AI_CONFIG.TITLE.MAX_WORDS} words.
-                - No explanations.
-                - No line breaks.
-                - No quotation marks.
-                - No punctuation at the end.
-                - Return ONLY the title.
-          `,
-        },
+                You generate concise conversation titles.
 
-        ...messages,
+                Rules:
+                - Identify the user's primary topic or intent.
+                - Prefer descriptive titles over single words.
+                - Include the main subject and, when possible, the purpose.
+                - Maximum ${AI_CONFIG.TITLE.MAX_WORDS} words.
+                - Use Title Case.
+                - Do not use quotation marks.
+                - Do not use emojis.
+                - Do not end with punctuation.
+                - Return ONLY the title.
+        `},
+        {
+          role: "user",
+          content: userMessage,
+        },
       ],
 
       temperature: AI_CONFIG.TITLE.TEMPERATURE,
