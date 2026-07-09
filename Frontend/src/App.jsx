@@ -1,16 +1,17 @@
 import './App.css';
-import Sidebar from './Sidebar.jsx';
-import ChatWindow from './ChatWindow.jsx';
-import { MyContext } from './MyContext.jsx';
+import Sidebar from "./components/Sidebar";
+import ChatWindow from "./components/ChatWindow";
+import { MyContext } from './context/MyContext.jsx';
 import { useState } from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 function App() {
   const [prompt, setPrompt] = useState('');
-  const [reply, setReply] = useState('');
+  const [reply, setReply] = useState(null);
   const [threadId, setThreadId] = useState(null);
   const [prevChats, setPrevChats] = useState([]);
   const [newChat, setNewChat] = useState(true);
+  const [allThreads, setAllThreads] = useState([]);
 
   const providerValues = {
     prompt,
@@ -23,6 +24,8 @@ function App() {
     setPrevChats,
     newChat,
     setNewChat,
+    allThreads,
+    setAllThreads,
   };
 
   return (
@@ -33,7 +36,7 @@ function App() {
 
             <Routes>
               <Route path="/" element={<ChatWindow />} />
-              <Route path="/chat/:threadId" element={<ChatWindow />} />
+              <Route path="/thread/:threadId" element={<ChatWindow />} />
             </Routes>
           </div>
         </MyContext.Provider>

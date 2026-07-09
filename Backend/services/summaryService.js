@@ -47,7 +47,6 @@ const updateSummary = async (thread) => {
   } catch (err) {
     console.error("Summary Service:", err.message);
 
-    // Keep previous summary if updating fails
     return thread.summary;
   }
 };

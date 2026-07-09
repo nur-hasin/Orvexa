@@ -1,0 +1,186 @@
+.sidebar {
+    width: 300px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #171717;
+    color: #b4b4b4;
+    border-right: 0.5px solid rgba(255, 255, 255, .07);
+}
+
+.sidebar button {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 10px 0;
+    padding: 10px;
+    cursor: pointer;
+    border: .5px solid rgba(255, 255, 255, .25);
+    border-radius: 7px;
+    background: transparent;
+    flex-shrink: 0;
+}
+
+.sidebar button:hover {
+    background: rgba(220, 220, 220, .05);
+}
+
+.sidebar button img {
+    width: 24px;
+    height: 24px;
+    background: #fff;
+}
+
+.sidebar button i {
+    font-size: 15px;
+}
+
+.history-scroll {
+    flex: 1;
+    margin: 0 3px 0 10px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.history {
+    margin: 0;
+    padding: 0;
+    font-size: 15px;
+}
+
+.history-scroll::-webkit-scrollbar {
+    width: 4px;
+}
+
+.history-scroll::-webkit-scrollbar-thumb {
+    background: rgba(200, 200, 200, .13);
+    border-radius: 20px;
+}
+
+.history li {
+    list-style: none;
+    padding: 8px;
+    margin: 2px 4px 2px 0;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.history li:hover {
+    background: rgba(220, 220, 220, .05);
+}
+
+.sidebar-footer {
+    flex-shrink: 0;
+    border-top: .5px solid rgba(255, 255, 255, .13);
+    padding: 15px;
+}
+
+.sidebar-footer p {
+    margin: 0;
+    text-align: center;
+    font-size: 13px;
+}
+
+.section-label {
+    font-size: 13px;
+    color: #8a8a8a;
+    margin: 10px 8px 4px;
+}
+
+.thread-menu {
+    position: fixed;
+    background-color: #2a2a2a;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    min-width: 140px;
+    padding: 6px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.thread-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.thread-item.active {
+    background-color: rgba(220, 220, 220, .05);
+}
+
+.thread-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+    min-width: 0;
+}
+
+.rename-input {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    color: #fff;
+    padding: 4px 6px;
+    font-size: 14px;
+    outline: none;
+}
+
+.more-btn {
+    opacity: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    color: #ccc;
+    cursor: pointer;
+}
+
+.thread-actions {
+    flex-shrink: 0;
+}
+
+.thread-item:hover .more-btn,
+.thread-actions:has(.thread-menu) .more-btn {
+    opacity: 0.8;
+}
+
+.more-btn:hover {
+    background-color: rgba(255, 255, 255, 0.07);
+}
+
+.thread-menu button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 14px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.thread-menu button:hover {
+    background-color: rgba(200, 200, 200, 0.05);
+}
+
+.thread-menu button.danger, .thread-menu button.danger .material-symbols-outlined {
+    color: #ff6969;
+}
+
+.thread-menu button.danger:hover {
+    background-color: rgba(246, 102, 102, 0.1);
+}
+
+.thread-menu .material-symbols-outlined {
+    font-size: 18px;
+}

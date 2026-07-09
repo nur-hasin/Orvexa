@@ -2,23 +2,23 @@ export const AI_CONFIG = {
   CHAT: {
     MODEL: "openrouter/free",
     TEMPERATURE: 0.7,
-    MAX_TOKENS: 2048,
+    MAX_TOKENS: 4096,
     MAX_HISTORY: 6,
     TIMEOUT: 60000,
   },
 
   TITLE: {
-    MODEL: "liquid/lfm-2.5-1.2b-instruct:free",
+    MODEL: "openrouter/free",
     TEMPERATURE: 0,
-    MAX_TOKENS: 64,
-    MAX_WORDS: 4,
+    MAX_TOKENS: 264,
+    MAX_WORDS: 6,
   },
 
   SUMMARY: {
-    MODEL: "liquid/lfm-2.5-1.2b-instruct:free",
+    MODEL: "openrouter/free",
     TEMPERATURE: 0.2,
     WINDOW: 20,
-    MAX_TOKENS: 256,
-    MAX_WORDS: 100,
+    MAX_TOKENS: 512,
+    MAX_WORDS: 120,
   },
 };

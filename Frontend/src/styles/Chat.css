@@ -1,0 +1,141 @@
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+    gap: 16px;
+}
+
+.chat-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.chat-container::-webkit-scrollbar-thumb {
+    background: rgba(200, 200, 200, .5);
+    border-radius: 20px;
+}
+
+.user-box,
+.assistant-box {
+    display: flex;
+    width: 100%;
+}
+
+.user-box {
+    justify-content: flex-end;
+}
+
+.assistant-box {
+    justify-content: flex-start;
+}
+
+
+.user-msg,
+.assistant-msg {
+    padding: 16px;
+    border-radius: 16px;
+    font-size: 15px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+.user-msg {
+    max-width: 70%;
+    background-color: #323232;
+}
+
+.assistant-msg{
+    max-width: 100%;
+}
+
+.assistant-msg ul,
+.assistant-msg ol {
+    padding-left: 24px;
+}
+
+.assistant-msg pre {
+    background: #0d1117;
+    padding: 16px;
+    border-radius: 10px;
+    overflow-x: auto;
+}
+
+.assistant-msg pre code.hljs {
+    background: none;
+    padding: 0;
+    font-size: 13px;
+}
+
+.assistant-msg table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    overflow-x: auto;
+}
+
+.assistant-msg th,
+.assistant-msg td {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 8px 12px;
+    text-align: left;
+    vertical-align: top;
+}
+
+.assistant-msg th {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.assistant-msg tr:nth-child(even) td {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.assistant-msg hr {
+    display: none;
+}
+
+.notice-box {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.notice-msg {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #da7c38;
+    background-color: rgba(212, 160, 76, 0.1);
+    border: 1px solid rgba(212, 160, 76, 0.25);
+    border-radius: 10px;
+    padding: 10px 16px;
+}
+
+.notice-msg i {
+    color: #ef713f;;
+}
+
+.empty-state {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 150px;
+}
+
+.empty-state h1 {
+    font-size: 42px;
+    font-weight: 400;
+    margin-bottom: 14px;
+}
+
+.empty-state p {
+    max-width: 650px;
+    color: #9ca3af;
+    font-size: 17px;
+    line-height: 1.6;
+}

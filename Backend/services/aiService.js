@@ -22,6 +22,14 @@ const buildContext = (thread) => {
   return context;
 };
 
+export class RateLimitError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "RateLimitError";
+    this.isRateLimit = true;
+  }
+}
+
 const getOpenRouterAIAPIResponse = async (thread) => {
   const controller = new AbortController();
 
@@ -39,7 +47,12 @@ const getOpenRouterAIAPIResponse = async (thread) => {
     });
 
     if (!response.ok) {
-      throw new Error(data.error?.message || `HTTP ${response.status}`);
+      if (/rate limit exceeded/i.test(data?.error?.message || "")) {
+        throw new RateLimitError(
+          "You've reached the current usage limit. Please try again in a few moments.",
+        );
+      }
+      throw new Error(data?.error?.message || "AI request failed");
     }
 
     const content = data?.choices?.[0]?.message?.content;
@@ -49,7 +62,7 @@ const getOpenRouterAIAPIResponse = async (thread) => {
     }
 
     if (process.env.NODE_ENV !== "production") {
-      console.log(`✓ Using model: ${AI_CONFIG.MODEL}`);
+      console.log(`✓ Using model: ${AI_CONFIG.CHAT.MODEL}`);
     }
 
     return content.trim();

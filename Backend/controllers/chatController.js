@@ -92,33 +92,54 @@ export const chat = async (req, res, next) => {
       content: message,
     });
 
-    const aiResponse = await getOpenRouterAIAPIResponse(thread);
-
+    let aiResponse;
+    try {
+      aiResponse = await getOpenRouterAIAPIResponse(thread);
+    } catch (err) {
+      if (err.isRateLimit) {
+        await thread.save();
+        return res.status(429).json({
+          threadId: thread.threadId,
+          rateLimited: true,
+          message: err.message,
+        });
+      }
+      throw err;
+    }
     thread.messages.push({
       role: "assistant",
       content: aiResponse,
     });
 
-    if (thread.title === "New Chat") {
-      thread.title = await generateTitle(thread.messages[0].content);
-    }
+    const conversationCount = thread.messages.filter(
+      (m) => m.role === "assistant",
+    ).length;
 
     const shouldUpdateSummary =
-      thread.messages.length >= AI_CONFIG.SUMMARY.WINDOW &&
-      thread.messages.length % AI_CONFIG.SUMMARY.WINDOW === 0;
+      conversationCount >= AI_CONFIG.SUMMARY.WINDOW &&
+      conversationCount % AI_CONFIG.SUMMARY.WINDOW === 0;
 
     if (shouldUpdateSummary) {
       thread.summary = await updateSummary(thread);
     }
 
+    const isFirstReply = thread.title === "New Chat";
+    const firstUserMessage = thread.messages[0].content;
+
+    if (isFirstReply) {
+      const generatedTitle = await generateTitle(firstUserMessage);
+
+      thread.title = generatedTitle || firstUserMessage.slice(0, 30);
+    }
+
     await thread.save();
 
-    return res.json({
+    res.json({
       threadId: thread.threadId,
       title: thread.title,
       reply: aiResponse,
     });
-  } catch (err) {
+  }  catch (err) {
     next(err);
   }
 };

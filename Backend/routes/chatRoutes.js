@@ -10,7 +10,7 @@ import {
 
 const router = express.Router();
 
-router.get("/thread", getThreads);
+router.get("/threads", getThreads);
 router.get("/thread/:threadId", getThread);
 router.delete("/thread/:threadId", deleteThread);
 router.post("/chat", chat);

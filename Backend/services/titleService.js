@@ -1,7 +1,7 @@
 import { AI_CONFIG } from "../config/aiConfig.js";
 import openRouterClient from "./openRouterClient.js";
 
-const generateTitle = async (userMessage) => {
+const generateTitle = async (userMessage, attempt = 1) => {
   try {
     const { response, data } = await openRouterClient({
       model: AI_CONFIG.TITLE.MODEL,
@@ -10,22 +10,32 @@ const generateTitle = async (userMessage) => {
         {
           role: "system",
           content: `
-                You generate concise conversation titles.
+              You are a chat title generator.
 
-                Rules:
-                - Identify the user's primary topic or intent.
-                - Prefer descriptive titles over single words.
-                - Include the main subject and, when possible, the purpose.
-                - Maximum ${AI_CONFIG.TITLE.MAX_WORDS} words.
-                - Use Title Case.
-                - Do not use quotation marks.
-                - Do not use emojis.
-                - Do not end with punctuation.
-                - Return ONLY the title.
-        `},
+              Your only task:
+              Create a short, meaningful title that summarizes the user's message.
+
+              STRICT OUTPUT RULES:
+              - Return ONLY the title text.
+              - Do not explain anything.
+              - Do not describe your process.
+              - Do not mention the user or the message.
+              - Do not output analysis, reasoning, instructions, or examples.
+              - Do not output phrases like "The user", "Intent", "Primary topic", "Summary", or "Rules".
+              - Do not output sentences.
+              - Maximum ${AI_CONFIG.TITLE.MAX_WORDS} words.
+              - Use Title Case.
+              - No quotes.
+              - No punctuation.
+              - No emojis.
+              `,
+        },
         {
           role: "user",
-          content: userMessage,
+          content: `
+              Generate a title for this conversation:
+              ${userMessage}
+              `,
         },
       ],
 
@@ -34,21 +44,45 @@ const generateTitle = async (userMessage) => {
     });
 
     if (!response.ok) {
-      throw new Error(data.error?.message || "Failed to generate title");
+      console.error("OpenRouter error:", JSON.stringify(data, null, 2));
+
+      const retryAfter = data?.error?.metadata?.retry_after_seconds;
+
+      if (retryAfter && attempt < 2) {
+        await new Promise((resolve) =>
+          setTimeout(resolve, retryAfter * 1000 + 250),
+        );
+        return generateTitle(userMessage, attempt + 1);
+      }
+
+      throw new Error(data.error?.message || "Provider returned error");
     }
 
-    const title = data?.choices?.[0]?.message?.content;
+    const message = data?.choices?.[0]?.message;
+    let title = message?.content?.trim();
 
-    if (typeof title !== "string" || !title.trim()) {
+    if (!title) {
       throw new Error("Invalid title returned by AI");
     }
 
-    return title.trim();
-  } catch (err) {
-    console.error("Title Service:", err.message);
+    title = title
+      .split("\n")
+      .filter((line) => line.trim())
+      .at(-1)
+      .trim();
 
-    // Fallback title
-    return "New Chat";
+    title = title
+      .replace(/^(title:|Title:)/i, "")
+      .replace(/["']/g, "")
+      .trim();
+
+    title = title.split(/\s+/).slice(0, AI_CONFIG.TITLE.MAX_WORDS).join(" ");
+
+    return title;
+  } catch (err) {
+    console.error(`Title Service (attempt ${attempt}):`, err.message);
+
+    return null;
   }
 };
 
