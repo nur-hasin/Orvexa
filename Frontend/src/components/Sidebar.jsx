@@ -273,6 +273,7 @@ function Sidebar() {
     >
       {renamingId === thread.id ? (
         <input
+          name="rename"
           ref={renameInputRef}
           className="rename-input"
           value={renameValue}

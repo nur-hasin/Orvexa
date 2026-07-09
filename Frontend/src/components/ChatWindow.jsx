@@ -318,6 +318,7 @@ function ChatWindow() {
       <div className="chat-input">
         <div className="input-box">
           <input
+            name="prompt"
             type="text"
             placeholder="Ask anything"
             value={prompt}
