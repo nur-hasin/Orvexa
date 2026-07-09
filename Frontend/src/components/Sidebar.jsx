@@ -45,7 +45,7 @@ function Sidebar() {
 
   const getAllThreads = useCallback(async () => {
     try {
-      const res = await fetch("http://localhost:8080/api/threads");
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/threads`);
 
       if (!res.ok) {
         throw new Error("Failed to fetch threads");
@@ -160,7 +160,7 @@ function Sidebar() {
 
     try {
       const res = await fetch(
-        `http://localhost:8080/api/thread/${thread.id}/pin`,
+        `${import.meta.env.VITE_API_URL}/api/thread/${thread.id}/pin`,
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
@@ -210,7 +210,7 @@ function Sidebar() {
 
     try {
       const res = await fetch(
-        `http://localhost:8080/api/thread/${thread.id}/title`,
+        `${import.meta.env.VITE_API_URL}/api/thread/${thread.id}/title`,
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
@@ -240,7 +240,7 @@ function Sidebar() {
     setAllThreads((prev) => prev.filter((t) => t.id !== thread.id));
 
     try {
-      const res = await fetch(`http://localhost:8080/api/thread/${thread.id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/thread/${thread.id}`, {
         method: "DELETE",
       });
 

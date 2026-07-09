@@ -73,7 +73,9 @@ function ChatWindow() {
       setAnimateReply(false);
 
       try {
-        const res = await fetch(`http://localhost:8080/api/thread/${threadId}`);
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/thread/${threadId}`,
+        );
         const data = await res.json();
 
         if (!res.ok) {
@@ -137,7 +139,7 @@ function ChatWindow() {
     setAnimateReply(true);
 
     try {
-      const res = await fetch("http://localhost:8080/api/chat", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
