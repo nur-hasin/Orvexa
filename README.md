@@ -1,7 +1,7 @@
 <div align="center">
 
 <p>
-  <img src="./docs/logo.png" alt="Orvexa Logo" width="120"/>
+  <img src="./docs/logo.png" alt="Orvexa Logo" width="80"/>
 </p>
 
 # Orvexa
@@ -43,13 +43,13 @@ Delivers persistent chat history, intelligent thread management, rich Markdown a
 
 ### 💬 AI Conversation
 
-#### 💻 Markdown
+#### 🖋️ Markdown
 
 <p align="center">
 <img src="./docs/code.png" width="900" alt="Markdown"/>
 </p>
 
-#### Code Rendering
+#### 💻 Code Rendering
 
 <p align="center">
 <img src="./docs/markdown.png" width="900" alt="code"/>
