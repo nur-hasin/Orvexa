@@ -46,13 +46,13 @@ Delivers persistent chat history, intelligent thread management, rich Markdown a
 #### 🖋️ Markdown
 
 <p align="center">
-<img src="./docs/code.png" width="900" alt="Markdown"/>
+<img src="./docs/markdown.png" width="900" alt="Markdown"/>
 </p>
 
 #### 💻 Code Rendering
 
 <p align="center">
-<img src="./docs/markdown.png" width="900" alt="code"/>
+<img src="./docs/code.png" width="900" alt="code"/>
 </p>
 
 
