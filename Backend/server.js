@@ -15,12 +15,14 @@ const PORT = process.env.PORT || 8080;
 connectDB();
 
 app.use(helmet());
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: ["https://www.orvexa.xyz", "https://orvexa.xyz"],
     credentials: true,
   }),
 );
+
 app.use(logger);
 app.use(express.json());
 app.use("/api/chat", perMinuteLimiter, perDayLimiter);
